@@ -1,0 +1,237 @@
+@use 'core' as *;
+
+/* ---------------------------------------------------------------------------
+   Theme tokens
+   Light is the base; dark overrides via [data-theme='dark'] and, when the user
+   has expressed no preference, via prefers-color-scheme.
+--------------------------------------------------------------------------- */
+:root {
+  --c-bg: #f7f8fc;
+  --c-bg-alt: #eef1f8;
+  --c-surface: #ffffff;
+  --c-surface-2: #f2f4f9;
+  --c-border: #e2e6ef;
+  --c-text: #131826;
+  --c-text-muted: #5b6478;
+  --c-text-soft: #808aa0;
+  --c-accent: #4f46e5;
+  --c-accent-strong: #4338ca;
+  --c-accent-soft: rgba(79, 70, 229, 0.1);
+  --c-on-accent: #ffffff;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 14px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 8px 30px rgba(16, 24, 40, 0.1);
+  --header-bg: rgba(247, 248, 252, 0.82);
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --section-gap: 4.5rem;
+
+  color-scheme: light;
+}
+
+@mixin dark-tokens {
+  --c-bg: #0b1120;
+  --c-bg-alt: #0f1729;
+  --c-surface: #121b2f;
+  --c-surface-2: #182238;
+  --c-border: #24304a;
+  --c-text: #e8ecf6;
+  --c-text-muted: #a4b0c7;
+  --c-text-soft: #7d8aa3;
+  --c-accent: #818cf8;
+  --c-accent-strong: #a5b4fc;
+  --c-accent-soft: rgba(129, 140, 248, 0.14);
+  --c-on-accent: #0b1120;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --header-bg: rgba(11, 17, 32, 0.8);
+
+  color-scheme: dark;
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
+}
+
+@include respond-to('lg') {
+  :root {
+    --section-gap: 6.5rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reset
+--------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--c-text);
+  background-color: var(--c-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color $dur $ease, color $dur $ease;
+}
+
+img,
+svg,
+picture,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+a {
+  color: var(--c-accent);
+  text-decoration: none;
+
+  @include focus-ring;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+}
+
+/* Scrollbar (WebKit) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--c-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--c-border);
+  border-radius: $radius-pill;
+  border: 2px solid var(--c-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-text-soft);
+}
+
+/* ---------------------------------------------------------------------------
+   Global helpers
+--------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: $z-top;
+  padding: 0.65rem 1.1rem;
+  border-radius: $radius-sm;
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  font-weight: 600;
+
+  &:focus {
+    top: 1rem;
+  }
+}
+
+/* Entrance animation driven by useReveal() */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity $dur-slow $ease, transform $dur-slow $ease;
+  will-change: opacity, transform;
+}
+
+.reveal--visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+}

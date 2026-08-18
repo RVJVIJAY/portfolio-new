@@ -1,0 +1,55 @@
+@use '../../styles/core' as *;
+
+.grid {
+  display: grid;
+  gap: 1.1rem;
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-to('lg') {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.4rem;
+  }
+}
+
+.card {
+  @include card;
+
+  padding: 1.35rem;
+  transition: transform $dur $ease, box-shadow $dur $ease, border-color $dur $ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: var(--c-accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  @include respond-to('md') {
+    padding: 1.5rem;
+  }
+}
+
+.category {
+  font-size: 0.98rem;
+  color: var(--c-text);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.tag {
+  padding: 0.3rem 0.7rem;
+  border-radius: $radius-pill;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  color: var(--c-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}

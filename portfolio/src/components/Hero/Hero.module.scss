@@ -1,0 +1,414 @@
+@use '../../styles/core' as *;
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-top: 3rem;
+  padding-bottom: 3.5rem;
+  scroll-margin-top: 5rem;
+
+  @include respond-to('md') {
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+  }
+
+  @include respond-to('lg') {
+    padding-top: 6rem;
+    padding-bottom: 5.5rem;
+  }
+}
+
+/* Soft accent wash behind the hero. */
+.glow {
+  position: absolute;
+  top: -22rem;
+  right: -12rem;
+  width: 44rem;
+  height: 44rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c-accent-soft) 0%, transparent 62%);
+  pointer-events: none;
+}
+
+.glowAlt {
+  position: absolute;
+  bottom: -18rem;
+  left: -14rem;
+  width: 34rem;
+  height: 34rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c-accent-soft) 0%, transparent 65%);
+  pointer-events: none;
+  animation: drift 14s $ease infinite alternate;
+}
+
+.inner {
+  @include container;
+
+  position: relative;
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+
+  @include respond-to('lg') {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: 3.5rem;
+  }
+}
+
+/* No portrait — let the copy use the full width. */
+.solo {
+  @include respond-to('lg') {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Staggered entrance for the hero copy. */
+.content > * {
+  animation: fade-up 700ms $ease both;
+}
+
+@for $i from 1 through 7 {
+  .content > *:nth-child(#{$i}) {
+    animation-delay: #{$i * 80}ms;
+  }
+}
+
+.content {
+  order: 2;
+
+  @include respond-to('lg') {
+    order: 1;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1.25rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--c-border);
+  border-radius: $radius-pill;
+  background: var(--c-surface);
+  color: var(--c-text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  animation: pulse 2.2s infinite;
+}
+
+.name {
+  font-size: clamp(2.1rem, 8vw, 3.9rem);
+  letter-spacing: -0.035em;
+  color: var(--c-text);
+}
+
+.highlight {
+  background: linear-gradient(
+    120deg,
+    var(--c-accent) 0%,
+    var(--c-accent-strong) 35%,
+    var(--c-accent) 70%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  white-space: nowrap;
+  animation: shine 7s linear infinite;
+}
+
+.role {
+  margin-top: 0.65rem;
+  font-size: clamp(1.05rem, 3.6vw, 1.4rem);
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+.tagline {
+  margin-top: 0.9rem;
+  max-width: 34rem;
+  color: var(--c-text-muted);
+  font-size: 1.02rem;
+
+  @include respond-to('md') {
+    font-size: 1.1rem;
+  }
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+  margin-top: 1.5rem;
+  color: var(--c-text-muted);
+  font-size: 0.92rem;
+
+  li,
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--c-text-muted);
+    word-break: break-word;
+  }
+
+  a:hover {
+    color: var(--c-accent);
+  }
+
+  svg {
+    color: var(--c-accent);
+    flex-shrink: 0;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+%button-base {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: $radius-md;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: transform $dur-fast $ease, box-shadow $dur-fast $ease,
+    background-color $dur-fast $ease, border-color $dur-fast $ease, color $dur-fast $ease;
+
+  @include focus-ring;
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  /* Light sweep across the button on hover. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 -60%;
+    width: 45%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+    transform: skewX(-18deg);
+    transition: left $dur-slow $ease;
+  }
+
+  &:hover::after {
+    left: 130%;
+  }
+
+  @include below('sm') {
+    flex: 1 1 100%;
+  }
+}
+
+.primary {
+  @extend %button-base;
+
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    background: var(--c-accent-strong);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.secondary {
+  @extend %button-base;
+
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
+  color: var(--c-text);
+
+  &:hover {
+    border-color: var(--c-accent);
+    color: var(--c-accent);
+  }
+}
+
+.socials {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+
+  a {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--c-border);
+    border-radius: $radius-md;
+    background: var(--c-surface);
+    color: var(--c-text-muted);
+    transition: color $dur-fast $ease, border-color $dur-fast $ease, transform $dur-fast $ease;
+
+    &:hover {
+      color: var(--c-accent);
+      border-color: var(--c-accent);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.portrait {
+  order: 1;
+  display: flex;
+  justify-content: center;
+  animation: fade-in 900ms $ease both 160ms;
+
+  @include respond-to('lg') {
+    order: 2;
+    justify-content: flex-end;
+  }
+}
+
+.portraitFrame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(10rem, 46vw, 15rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--c-border);
+  background: linear-gradient(160deg, var(--c-surface), var(--c-surface-2));
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  animation: float 7s $ease infinite alternate;
+
+  @include respond-to('lg') {
+    width: clamp(14rem, 24vw, 20rem);
+    border-radius: $radius-lg * 2;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.stats {
+  @include container;
+
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 1rem;
+  margin-top: 3rem;
+
+  li {
+    @include card;
+
+    padding: 1.15rem 1.25rem;
+    animation: fade-up 700ms $ease both 480ms;
+    transition: transform $dur $ease, border-color $dur $ease, box-shadow $dur $ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: var(--c-accent);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  @include respond-to('md') {
+    margin-top: 4rem;
+    gap: 1.25rem;
+  }
+}
+
+.statValue {
+  display: block;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--c-accent);
+}
+
+.statLabel {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--c-text-muted);
+  font-size: 0.88rem;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+
+  70% {
+    box-shadow: 0 0 0 0.5rem rgba(34, 197, 94, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes float {
+  from {
+    transform: translateY(-8px);
+  }
+
+  to {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(3rem, -2rem, 0) scale(1.12);
+  }
+}
+
+@keyframes shine {
+  to {
+    background-position: 220% center;
+  }
+}

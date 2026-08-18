@@ -1,0 +1,36 @@
+// ---------------------------------------------------------------------------
+// Design tokens that live in Sass (compile-time only).
+// Runtime-themeable tokens (colours) live as CSS custom properties in main.scss
+// ---------------------------------------------------------------------------
+
+// Breakpoints — mobile-first, min-width based.
+$breakpoints: (
+  'sm': 480px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+  'xxl': 1536px,
+);
+
+// Layout
+$container-max: 1140px;
+$container-pad-mobile: 1.25rem;
+$container-pad-tablet: 2rem;
+$container-pad-desktop: 2.5rem;
+
+// Radii
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 18px;
+$radius-pill: 999px;
+
+// Motion
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+$dur-fast: 150ms;
+$dur: 260ms;
+$dur-slow: 600ms;
+
+// Z-index scale
+$z-header: 100;
+$z-menu: 200;
+$z-top: 300;

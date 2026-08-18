@@ -1,0 +1,3 @@
+// Single entry point for component modules:  @use '../styles/core' as *;
+@forward 'variables';
+@forward 'mixins';

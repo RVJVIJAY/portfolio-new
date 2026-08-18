@@ -1,0 +1,118 @@
+@use '../../styles/core' as *;
+
+.footer {
+  padding-top: 3rem;
+  background: var(--c-bg-alt);
+  border-top: 1px solid var(--c-border);
+}
+
+.inner {
+  @include container;
+
+  display: grid;
+  gap: 2rem;
+  padding-bottom: 2.5rem;
+
+  @include respond-to('md') {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+.name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--c-text);
+}
+
+.role {
+  margin-top: 0.15rem;
+  color: var(--c-text-muted);
+  font-size: 0.92rem;
+}
+
+.email {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.92rem;
+  word-break: break-word;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.navTitle {
+  margin-bottom: 0.85rem;
+  color: var(--c-text-soft);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav {
+  ul {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  a {
+    color: var(--c-text-muted);
+    font-size: 0.92rem;
+
+    &:hover {
+      color: var(--c-accent);
+    }
+  }
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+
+  a {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid var(--c-border);
+    border-radius: $radius-md;
+    background: var(--c-surface);
+    color: var(--c-text-muted);
+    transition: color $dur-fast $ease, border-color $dur-fast $ease, transform $dur-fast $ease;
+
+    &:hover {
+      color: var(--c-accent);
+      border-color: var(--c-accent);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.bar {
+  @include container;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-block: 1.4rem;
+  border-top: 1px solid var(--c-border);
+  color: var(--c-text-soft);
+  font-size: 0.84rem;
+  text-align: center;
+
+  @include respond-to('md') {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.built {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}

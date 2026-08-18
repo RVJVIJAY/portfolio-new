@@ -1,0 +1,78 @@
+@use 'sass:map';
+@use 'variables' as *;
+
+/// Mobile-first media query. `@include respond-to('md') { ... }`
+@mixin respond-to($name) {
+  $size: map.get($breakpoints, $name);
+
+  @if $size == null {
+    @error 'Unknown breakpoint `#{$name}`. Available: #{map.keys($breakpoints)}.';
+  }
+
+  @media (min-width: $size) {
+    @content;
+  }
+}
+
+/// Max-width query for the rare mobile-only override.
+@mixin below($name) {
+  $size: map.get($breakpoints, $name);
+
+  @media (max-width: ($size - 0.02px)) {
+    @content;
+  }
+}
+
+/// Centred page gutter, widening with the viewport.
+@mixin container {
+  width: 100%;
+  max-width: $container-max;
+  margin-inline: auto;
+  padding-inline: $container-pad-mobile;
+
+  @include respond-to('md') {
+    padding-inline: $container-pad-tablet;
+  }
+
+  @include respond-to('lg') {
+    padding-inline: $container-pad-desktop;
+  }
+}
+
+/// Visible, consistent keyboard focus.
+@mixin focus-ring($offset: 3px) {
+  &:focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: $offset;
+    border-radius: $radius-sm;
+  }
+}
+
+/// Clamp text to a number of lines.
+@mixin line-clamp($lines) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/// Hide visually but keep for screen readers.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/// Frosted card surface used across sections.
+@mixin card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: $radius-lg;
+  box-shadow: var(--shadow-sm);
+}

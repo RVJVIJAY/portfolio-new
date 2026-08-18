@@ -1,0 +1,267 @@
+@use '../../styles/core' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color $dur $ease, border-color $dur $ease, box-shadow $dur $ease;
+}
+
+.scrolled {
+  background: var(--header-bg);
+  backdrop-filter: saturate(180%) blur(14px);
+  border-bottom-color: var(--c-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav {
+  @include container;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 4rem;
+
+  @include respond-to('lg') {
+    height: 4.75rem;
+  }
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--c-text);
+  font-weight: 700;
+
+  @include focus-ring;
+}
+
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: $radius-md;
+  background: linear-gradient(135deg, var(--c-accent), var(--c-accent-strong));
+  color: #fff;
+  font-size: 0.82rem;
+  transition: transform $dur $ease, box-shadow $dur $ease;
+
+  .brand:hover & {
+    transform: rotate(-6deg) scale(1.06);
+    box-shadow: 0 6px 18px var(--c-accent-soft);
+  }
+}
+
+.brandName {
+  display: none;
+  font-size: 0.98rem;
+  letter-spacing: -0.01em;
+
+  @include respond-to('sm') {
+    display: block;
+  }
+}
+
+.links {
+  display: none;
+
+  @include respond-to('md') {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
+}
+
+.link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: $radius-sm;
+  color: var(--c-text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color $dur $ease, background-color $dur $ease;
+
+  /* Underline that grows out from the centre on hover and on the active link. */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.15rem;
+    height: 2px;
+    border-radius: $radius-pill;
+    background: linear-gradient(90deg, var(--c-accent), var(--c-accent-strong));
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform $dur $ease;
+  }
+
+  &:hover {
+    color: var(--c-text);
+    background: var(--c-accent-soft);
+  }
+
+  &:hover::after {
+    transform: scaleX(0.6);
+  }
+
+  @include respond-to('lg') {
+    padding-inline: 0.9rem;
+    font-size: 0.94rem;
+  }
+}
+
+.linkLabel {
+  display: inline-block;
+  transition: transform $dur $ease;
+
+  .link:hover & {
+    transform: translateY(-1px);
+  }
+}
+
+.active {
+  color: var(--c-accent);
+  font-weight: 600;
+}
+
+.link.active {
+  background: var(--c-accent-soft);
+}
+
+.link.active::after,
+.link.active:hover::after {
+  transform: scaleX(1);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: $radius-md;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
+  color: var(--c-text-muted);
+  transition: color $dur-fast $ease, border-color $dur-fast $ease, transform $dur-fast $ease;
+
+  @include focus-ring;
+
+  &:hover {
+    color: var(--c-accent);
+    border-color: var(--c-accent);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+.menuButton {
+  @include respond-to('md') {
+    display: none;
+  }
+}
+
+.drawer {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  z-index: $z-menu;
+  padding: 0.5rem 1.25rem 1.1rem;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  box-shadow: var(--shadow-md);
+  animation: drawer-in $dur $ease;
+
+  @include respond-to('md') {
+    display: none;
+  }
+}
+
+.drawerLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 0.6rem;
+  border-bottom: 1px solid var(--c-border);
+  border-radius: $radius-sm;
+  color: var(--c-text);
+  font-size: 1.02rem;
+  font-weight: 500;
+
+  svg {
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity $dur $ease, transform $dur $ease;
+  }
+
+  &:hover {
+    color: var(--c-accent);
+    padding-left: 0.9rem;
+  }
+
+  &:hover svg {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.drawerLink.active {
+  color: var(--c-accent);
+  background: var(--c-accent-soft);
+
+  svg {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.drawer li:last-child .drawerLink {
+  border-bottom: none;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(4, 8, 18, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $dur $ease;
+
+  @include respond-to('md') {
+    display: none;
+  }
+}
+
+.backdropOpen {
+  z-index: $z-menu - 1;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

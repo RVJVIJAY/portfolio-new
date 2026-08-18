@@ -1,0 +1,54 @@
+@use '../../styles/core' as *;
+
+.section {
+  padding-block: var(--section-gap);
+  scroll-margin-top: 4.5rem;
+}
+
+.alt {
+  background: var(--c-bg-alt);
+  border-block: 1px solid var(--c-border);
+}
+
+.inner {
+  @include container;
+}
+
+.head {
+  max-width: 46rem;
+  margin-bottom: 2.5rem;
+
+  @include respond-to('md') {
+    margin-bottom: 3.25rem;
+  }
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: $radius-pill;
+  background: var(--c-accent-soft);
+  color: var(--c-accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: clamp(1.75rem, 5vw, 2.6rem);
+  color: var(--c-text);
+}
+
+.lead {
+  margin-top: 0.9rem;
+  color: var(--c-text-muted);
+  font-size: 1.03rem;
+
+  @include respond-to('md') {
+    font-size: 1.08rem;
+  }
+}

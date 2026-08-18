@@ -1,0 +1,248 @@
+@use '../../styles/core' as *;
+
+.grid {
+  display: grid;
+  gap: 1.75rem;
+
+  @include respond-to('lg') {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+}
+
+.details {
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+}
+
+.detailCard {
+  @include card;
+
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.05rem 1.2rem;
+  color: var(--c-text);
+  transition: border-color $dur $ease, transform $dur $ease;
+
+  &:hover {
+    border-color: var(--c-accent);
+    transform: translateY(-2px);
+  }
+}
+
+.detailIcon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: $radius-md;
+  background: var(--c-accent-soft);
+  color: var(--c-accent);
+}
+
+.detailLabel {
+  display: block;
+  color: var(--c-text-soft);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.detailValue {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--c-border);
+    border-radius: $radius-pill;
+    background: var(--c-surface);
+    color: var(--c-text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    &:hover {
+      color: var(--c-accent);
+      border-color: var(--c-accent);
+    }
+  }
+}
+
+.form {
+  @include card;
+
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.4rem;
+
+  @include respond-to('md') {
+    padding: 1.9rem;
+  }
+}
+
+.row {
+  display: grid;
+  gap: 1.1rem;
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+
+  label {
+    color: var(--c-text);
+    font-size: 0.86rem;
+    font-weight: 600;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--c-border);
+    border-radius: $radius-md;
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-size: 0.95rem;
+    transition: border-color $dur-fast $ease, box-shadow $dur-fast $ease;
+
+    &::placeholder {
+      color: var(--c-text-soft);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--c-accent);
+      box-shadow: 0 0 0 3px var(--c-accent-soft);
+    }
+
+    &[aria-invalid='true'] {
+      border-color: #e11d48;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 8rem;
+  }
+}
+
+.error {
+  color: #e11d48;
+  font-size: 0.82rem;
+}
+
+.submit {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  justify-self: start;
+  padding: 0.8rem 1.5rem;
+  border-radius: $radius-md;
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: background-color $dur-fast $ease, box-shadow $dur-fast $ease, transform $dur-fast $ease;
+
+  @include focus-ring;
+
+  &:hover {
+    background: var(--c-accent-strong);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    cursor: progress;
+    opacity: 0.75;
+  }
+
+  /* Light sweep on hover. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 -60%;
+    width: 45%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-18deg);
+    transition: left $dur-slow $ease;
+  }
+
+  &:hover::after {
+    left: 130%;
+  }
+
+  @include below('sm') {
+    justify-self: stretch;
+  }
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: spin 0.7s linear infinite;
+}
+
+.status {
+  min-height: 1.25rem;
+  color: #16a34a;
+  font-size: 0.88rem;
+
+  &:not(:empty) {
+    animation: status-in $dur $ease;
+  }
+}
+
+.statusError {
+  color: #e11d48;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes status-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

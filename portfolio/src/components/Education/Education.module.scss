@@ -1,0 +1,92 @@
+@use '../../styles/core' as *;
+
+.grid {
+  display: grid;
+  gap: 2.25rem;
+
+  @include respond-to('md') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-to('lg') {
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 2rem;
+  }
+}
+
+.columnTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1.1rem;
+  color: var(--c-text);
+  font-size: 1.05rem;
+
+  svg {
+    color: var(--c-accent);
+  }
+}
+
+.list {
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  @include card;
+
+  padding: 1.3rem;
+  transition: border-color $dur $ease, transform $dur $ease;
+
+  &:hover {
+    border-color: var(--c-accent);
+    transform: translateY(-2px);
+  }
+
+  @include respond-to('md') {
+    padding: 1.5rem;
+  }
+}
+
+.period {
+  color: var(--c-accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.degree {
+  margin-top: 0.35rem;
+  font-size: 1.02rem;
+  color: var(--c-text);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: inherit;
+
+    &:hover {
+      color: var(--c-accent);
+    }
+  }
+}
+
+.institution {
+  margin-top: 0.25rem;
+  color: var(--c-text-muted);
+  font-size: 0.93rem;
+}
+
+.sep {
+  margin-inline: 0.4rem;
+  color: var(--c-text-soft);
+}
+
+.details {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--c-border);
+  color: var(--c-text-soft);
+  font-size: 0.9rem;
+}
