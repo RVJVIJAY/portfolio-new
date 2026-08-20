@@ -3,6 +3,7 @@ import { Navbar, type NavItem } from './components/Navbar/Navbar';
 import { Hero } from './components/Hero/Hero';
 import { SectionSkeleton } from './components/Loader/SectionSkeleton';
 import { useTheme } from './hooks/useTheme';
+import { useAccent } from './hooks/useAccent';
 import { resume } from './data/resume';
 import { Link } from './components/Link/Link';
 
@@ -35,6 +36,7 @@ const BackToTop = lazy(() =>
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
+  const { accent, setAccent } = useAccent();
   const {
     profile,
     socials,
@@ -75,15 +77,17 @@ export default function App() {
         Skip to content
       </Link>
 
-      <Navbar brand={profile.name} items={navItems} theme={theme} onToggleTheme={toggleTheme} />
+      <Navbar
+        brand={profile.name}
+        items={navItems}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        accent={accent}
+        onAccentChange={setAccent}
+      />
 
       <main id="main">
-        <Hero
-          profile={profile}
-          socials={socials}
-          stats={stats}
-          focusAreas={focusAreas}
-        />
+        <Hero profile={profile} socials={socials} stats={stats} />
 
         {profile.summary.length > 0 ? (
           <Suspense fallback={<SectionSkeleton cards={2} columns={2} tall alt />}>
@@ -133,9 +137,6 @@ export default function App() {
         />
         <BackToTop />
       </Suspense>
-
-      {/* Film grain, painted over everything. */}
-      <div className="grain" aria-hidden="true" />
     </>
   );
 }

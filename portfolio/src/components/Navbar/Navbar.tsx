@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import type { CSSProperties } from 'react';
 import { Icon } from '../Icon/Icon';
 import { useActiveSection } from '../../hooks/useActiveSection';
 import { useScrolled } from '../../hooks/useScrolled';
-import { useScrollProgress } from '../../hooks/useScrollProgress';
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
 import type { Theme } from '../../hooks/useTheme';
+import { AccentPicker } from '../AccentPicker/AccentPicker';
+import type { Accent } from '../../hooks/useAccent';
 import styles from './Navbar.module.scss';
 import { Link } from '../Link/Link';
 
@@ -19,14 +19,20 @@ interface NavbarProps {
   items: NavItem[];
   theme: Theme;
   onToggleTheme: () => void;
+  accent: Accent;
+  onAccentChange: (accent: Accent) => void;
 }
 
-const pad = (index: number) => String(index + 1).padStart(2, '0');
-
-export function Navbar({ brand, items, theme, onToggleTheme }: NavbarProps) {
+export function Navbar({
+  brand,
+  items,
+  theme,
+  onToggleTheme,
+  accent,
+  onAccentChange,
+}: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const scrolled = useScrolled();
-  const progress = useScrollProgress();
   const spyId = useActiveSection(items.map((item) => item.id));
 
   /* A click wins over the scroll-spy until the smooth scroll catches up, so the
@@ -82,21 +88,17 @@ export function Navbar({ brand, items, theme, onToggleTheme }: NavbarProps) {
     .toUpperCase();
 
   return (
-    <header
-      className={`${styles.header} ${scrolled ? styles.scrolled : ''} no-print`}
-      data-menu-open={menuOpen}
-    >
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ''} no-print`}>
       <nav className={styles.nav} aria-label="Primary">
         <Link className={styles.brand} to="#top">
           <span className={styles.brandMark} aria-hidden="true">
-            <span className={styles.brandMarkFill} />
-            <span className={styles.brandMarkText}>{initials}</span>
+            {initials}
           </span>
           <span className={styles.brandName}>{brand}</span>
         </Link>
 
         <ul className={styles.links}>
-          {items.map((item, index) => (
+          {items.map((item) => (
             <li key={item.id}>
               <Link
                 to={`#${item.id}`}
@@ -104,32 +106,22 @@ export function Navbar({ brand, items, theme, onToggleTheme }: NavbarProps) {
                 aria-current={activeId === item.id ? 'page' : undefined}
                 onClick={() => handleNavClick(item.id)}
               >
-                <span className={styles.linkIndex} aria-hidden="true">
-                  {pad(index)}
-                </span>
-                {/* Two copies of the label: one slides out, its twin slides in. */}
-                <span className={styles.linkText}>
-                  <span>{item.label}</span>
-                  <span aria-hidden="true">{item.label}</span>
-                </span>
+                <span className={styles.linkLabel}>{item.label}</span>
               </Link>
             </li>
           ))}
         </ul>
 
         <div className={styles.actions}>
+          <AccentPicker accent={accent} onChange={onAccentChange} />
+
           <button
             type="button"
             className={styles.iconButton}
             onClick={onToggleTheme}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           >
-            {/* Both icons ride one strip that slides between them. The visible
-                glyph is the theme you would switch *to*: a sun while dark. */}
-            <span className={styles.themeIcons} aria-hidden="true">
-              <Icon name="sun" size="1.05rem" />
-              <Icon name="moon" size="1.05rem" />
-            </span>
+            <Icon name={theme === 'dark' ? 'sun' : 'moon'} size="1.15rem" />
           </button>
 
           <button
@@ -140,50 +132,36 @@ export function Navbar({ brand, items, theme, onToggleTheme }: NavbarProps) {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
           >
-            <span className={styles.burger} aria-hidden="true">
-              <span />
-              <span />
-            </span>
+            <Icon name={menuOpen ? 'close' : 'menu'} size="1.35rem" />
           </button>
         </div>
       </nav>
 
-      {/* Reading progress, pinned to the header's bottom hairline. */}
-      <span
-        className={styles.progress}
-        style={{ transform: `scaleX(${progress})` }}
-        aria-hidden="true"
-      />
-
-      <div
-        id="mobile-menu"
-        className={styles.drawer}
-        aria-hidden={!menuOpen}
-        aria-label="Sections"
-      >
-        <ul className={styles.drawerList}>
-          {items.map((item, index) => (
-            <li key={item.id} style={{ '--i': index } as CSSProperties}>
+      <div id="mobile-menu" className={styles.drawer} hidden={!menuOpen}>
+        <ul>
+          {items.map((item) => (
+            <li key={item.id}>
               <Link
                 to={`#${item.id}`}
                 className={`${styles.drawerLink} ${activeId === item.id ? styles.active : ''}`}
                 aria-current={activeId === item.id ? 'page' : undefined}
                 onClick={() => handleNavClick(item.id)}
               >
-                <span className={styles.drawerIndex} aria-hidden="true">
-                  {pad(index)}
-                </span>
-                <span className={styles.drawerLabel}>{item.label}</span>
-                <Icon name="arrowUpRight" size="1.1rem" />
+                {item.label}
+                <Icon name="arrowUpRight" size="1rem" />
               </Link>
             </li>
           ))}
         </ul>
-
-        <p className={styles.drawerFoot} style={{ '--i': items.length } as CSSProperties}>
-          {brand}
-        </p>
       </div>
+
+      <button
+        type="button"
+        className={`${styles.backdrop} ${menuOpen ? styles.backdropOpen : ''}`}
+        onClick={() => setMenuOpen(false)}
+        tabIndex={-1}
+        aria-hidden="true"
+      />
     </header>
   );
 }

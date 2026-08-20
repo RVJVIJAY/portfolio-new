@@ -23,13 +23,6 @@
   }
 }
 
-/// Wrap motion that should be dropped for `prefers-reduced-motion: reduce`.
-@mixin motion-safe {
-  @media (prefers-reduced-motion: no-preference) {
-    @content;
-  }
-}
-
 /// Centred page gutter, widening with the viewport.
 @mixin container {
   width: 100%;
@@ -76,136 +69,19 @@
   border: 0;
 }
 
-/* ---------------------------------------------------------------------------
-   Editorial primitives
---------------------------------------------------------------------------- */
-
-/// Uppercase mono label — the small type that carries every eyebrow, index,
-/// date and category on the page.
-@mixin mono-label($size: 0.7rem) {
-  font-family: var(--font-mono);
-  font-size: $size;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  line-height: 1;
-}
-
-/// Tight display type for headings — Urbanist 600.
-@mixin display($size: 2rem, $weight: 600) {
-  font-family: var(--font-display);
-  font-size: $size;
-  font-weight: $weight;
-  line-height: 0.95;
-  letter-spacing: -0.035em;
-}
-
-/// The name mark — Urbanist 800. Reserved for Vijay's name itself (hero
-/// signature, nav brand, footer wordmark), never for ordinary headings.
-@mixin name-mark {
-  font-family: var(--font-display);
-  font-style: normal;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-/// A single hairline rule. Editorial layouts separate with lines, not shadows.
-@mixin rule($side: bottom) {
-  border-#{$side}: 1px solid var(--c-border);
-}
-
-/// Flat surface: hairline border, no shadow, minimal radius.
+/// Frosted card surface used across sections.
 @mixin card {
-  position: relative;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: var(--shadow-sm);
 }
 
-/// Card that lifts, sharpens its border and follows the pointer with a soft
-/// accent glow. Pair with `data-glow` + usePointerGlow() on the container.
-@mixin card-interactive {
-  @include card;
-
-  transition: border-color $dur $ease, transform $dur $ease, background-color $dur $ease;
-
-  /* Pointer-tracked glow; --px/--py are written by usePointerGlow(). */
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(
-      16rem circle at var(--px, 50%) var(--py, 0%),
-      var(--c-accent-soft),
-      transparent 65%
-    );
-    opacity: 0;
-    transition: opacity $dur $ease;
-    pointer-events: none;
-  }
-
-  &:hover {
-    border-color: var(--c-border-strong);
-    transform: translateY(-3px);
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-}
-
-/// Shared button shell: sweep-on-hover, press-down on click.
-@mixin btn-base {
-  position: relative;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  padding: 0.9rem 1.5rem;
-  border-radius: $radius-pill;
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  white-space: nowrap;
-  transition: transform $dur-fast $ease, background-color $dur $ease,
-    border-color $dur $ease, color $dur $ease;
-
-  @include focus-ring;
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  /* Arrow/icon nudges forward on hover. */
-  svg {
-    flex-shrink: 0;
-    transition: transform $dur $ease;
-  }
-
-  &:hover svg {
-    transform: translate(2px, -2px);
-  }
-}
-
-/// Link/label whose text swaps for a copy of itself sliding up from below.
-/// Markup: <span class="mask"><span>Label</span><span aria-hidden>Label</span></span>
-@mixin text-swap($distance: 100%) {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
-
-  > span {
-    display: block;
-    transition: transform $dur $ease;
-  }
-
-  > span:last-child {
-    position: absolute;
-    inset: 0;
-    transform: translateY($distance);
-  }
+/// Emits the four accent tokens for one palette + one mode.
+/// Used by main.scss to build every `[data-accent]` block.
+@mixin accent-tokens($base, $strong, $on, $soft-alpha) {
+  --c-accent: #{$base};
+  --c-accent-strong: #{$strong};
+  --c-accent-soft: #{rgba($base, $soft-alpha)};
+  --c-on-accent: #{$on};
 }

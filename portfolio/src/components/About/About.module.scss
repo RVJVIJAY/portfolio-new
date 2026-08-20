@@ -2,128 +2,67 @@
 
 .grid {
   display: grid;
-  gap: 2.5rem;
+  gap: 2rem;
 
   @include respond-to('lg') {
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    gap: 4rem;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 3rem;
     align-items: start;
   }
 }
 
 .copy {
   display: grid;
-  gap: 1.35rem;
+  gap: 1.1rem;
   color: var(--c-text-muted);
-  font-size: 1rem;
-  line-height: 1.75;
+  font-size: 1.02rem;
 
   @include respond-to('md') {
-    font-size: 1.05rem;
+    font-size: 1.06rem;
   }
 }
 
-/* The opening paragraph carries the section — larger, brighter, tighter. */
-.leadParagraph {
-  color: var(--c-text);
-  font-size: 1.15rem;
-  line-height: 1.6;
-  letter-spacing: -0.012em;
-
-  @include respond-to('md') {
-    font-size: 1.35rem;
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   Focus panel
---------------------------------------------------------------------------- */
 .panel {
-  padding: 1.75rem 1.5rem;
-  border: 1px solid var(--c-border);
-  border-radius: $radius-md;
-  background: var(--c-surface);
+  @include card;
+
+  padding: 1.5rem;
 
   @include respond-to('md') {
-    padding: 2rem 1.85rem;
+    padding: 1.85rem;
   }
 }
 
 .panelTitle {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--c-border);
-  font-size: 1.02rem;
+  font-size: 1.05rem;
   color: var(--c-text);
-}
-
-.panelCount {
-  @include mono-label(0.62rem);
-
-  color: var(--c-accent);
 }
 
 .focusList {
   display: grid;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
 
   li {
     display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    padding: 0.85rem 0;
-    border-bottom: 1px solid var(--c-border);
+    align-items: flex-start;
+    gap: 0.6rem;
     color: var(--c-text-muted);
     font-size: 0.95rem;
-    transition: color $dur $ease, padding-left $dur $ease;
-
-    &:hover {
-      color: var(--c-text);
-      padding-left: 0.4rem;
-    }
   }
-}
 
-.focusIndex {
-  @include mono-label(0.58rem);
-
-  flex-shrink: 0;
-  color: var(--c-text-soft);
-  transition: color $dur $ease;
-
-  li:hover & {
+  svg {
+    margin-top: 0.3rem;
     color: var(--c-accent);
+    flex-shrink: 0;
   }
 }
 
-.focusLabel {
-  flex-shrink: 0;
-}
-
-/* Hairline that fills the leftover width, then turns accent on hover. */
-.focusRule {
-  flex: 1 1 auto;
-  height: 1px;
-  background: var(--c-border);
-  transform: scaleX(0);
-  transform-origin: right center;
-  transition: transform $dur $ease, background-color $dur $ease;
-
-  li:hover & {
-    background: var(--c-accent);
-    transform: scaleX(1);
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   Details
---------------------------------------------------------------------------- */
 .details {
   display: grid;
-  gap: 1.1rem;
+  gap: 0.9rem;
   margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--c-border);
 
   @include respond-to('sm') {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -134,41 +73,17 @@
   }
 
   dt {
-    @include mono-label(0.58rem);
-
     color: var(--c-text-soft);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   dd {
-    margin: 0.45rem 0 0;
+    margin: 0.15rem 0 0;
     color: var(--c-text);
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     word-break: break-word;
-  }
-
-  a {
-    position: relative;
-    color: var(--c-text);
-
-    /* Underline grows in from the left on hover. */
-    &::after {
-      content: '';
-      position: absolute;
-      inset-inline: 0;
-      bottom: -2px;
-      height: 1px;
-      background: var(--c-accent);
-      transform: scaleX(0);
-      transform-origin: left center;
-      transition: transform $dur $ease;
-    }
-
-    &:hover {
-      color: var(--c-accent);
-    }
-
-    &:hover::after {
-      transform: scaleX(1);
-    }
   }
 }

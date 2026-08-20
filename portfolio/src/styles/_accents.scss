@@ -1,0 +1,62 @@
+// ---------------------------------------------------------------------------
+// Accent palettes
+//
+// The single source of truth for every selectable accent. main.scss turns this
+// map into the `[data-accent]` token blocks, and AccentPicker.module.scss reads
+// the same map to colour its swatches — so a new accent means one entry here
+// and one entry in the ACCENTS list in src/hooks/useAccent.ts.
+//
+// Light and dark carry different values on purpose. A colour that reads well on
+// the near-white canvas is too dark on the navy one, and vice versa; every
+// value below clears 4.5:1 against its own background, and the light values
+// also clear 4.5:1 behind white button text.
+// ---------------------------------------------------------------------------
+
+$accents: (
+  'indigo': (
+    'light': #4f46e5,
+    'light-strong': #4338ca,
+    'dark': #818cf8,
+    'dark-strong': #a5b4fc,
+  ),
+  'violet': (
+    'light': #7c3aed,
+    'light-strong': #6d28d9,
+    'dark': #a78bfa,
+    'dark-strong': #c4b5fd,
+  ),
+  'cyan': (
+    'light': #0e7490,
+    'light-strong': #155e75,
+    'dark': #22d3ee,
+    'dark-strong': #67e8f9,
+  ),
+  'emerald': (
+    'light': #047857,
+    'light-strong': #065f46,
+    'dark': #34d399,
+    'dark-strong': #6ee7b7,
+  ),
+  'amber': (
+    'light': #b45309,
+    'light-strong': #92400e,
+    'dark': #fbbf24,
+    'dark-strong': #fcd34d,
+  ),
+  'rose': (
+    'light': #e11d48,
+    'light-strong': #be123c,
+    'dark': #fb7185,
+    'dark-strong': #fda4af,
+  ),
+);
+
+// Text drawn on top of an accent fill. Constant across accents, because every
+// light value is dark enough for white and every dark value light enough for
+// the navy canvas.
+$accent-on-light: #ffffff;
+$accent-on-dark: #0b1120;
+
+// Alpha used for `--c-accent-soft` (tinted chips, hover grounds, focus halos).
+$accent-soft-alpha-light: 0.1;
+$accent-soft-alpha-dark: 0.14;

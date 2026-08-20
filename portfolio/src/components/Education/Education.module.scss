@@ -2,7 +2,7 @@
 
 .grid {
   display: grid;
-  gap: 2.5rem;
+  gap: 2.25rem;
 
   @include respond-to('md') {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -17,92 +17,65 @@
 .columnTitle {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding-bottom: 0.9rem;
+  gap: 0.55rem;
   margin-bottom: 1.1rem;
-  border-bottom: 1px solid var(--c-border-strong);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
   color: var(--c-text);
+  font-size: 1.05rem;
 
   svg {
     color: var(--c-accent);
-    flex-shrink: 0;
   }
-}
-
-.columnCount {
-  @include mono-label(0.58rem);
-
-  margin-left: auto;
-  color: var(--c-text-soft);
 }
 
 .list {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .card {
-  @include card-interactive;
+  @include card;
 
-  padding: 1.2rem 1.15rem 1.3rem;
-  overflow: hidden;
+  padding: 1.3rem;
+  transition: border-color $dur $ease, transform $dur $ease;
 
   &:hover {
+    border-color: var(--c-accent);
     transform: translateY(-2px);
   }
 
   @include respond-to('md') {
-    padding: 1.4rem 1.35rem 1.5rem;
+    padding: 1.5rem;
   }
 }
 
 .period {
-  @include mono-label(0.58rem);
-
-  position: relative;
   color: var(--c-accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
 }
 
-.heading {
-  position: relative;
-  margin-top: 0.7rem;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
+.degree {
+  margin-top: 0.35rem;
+  font-size: 1.02rem;
   color: var(--c-text);
 
   a {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     color: inherit;
-    transition: color $dur $ease;
-
-    svg {
-      display: inline-block;
-      margin-left: 0.3rem;
-      vertical-align: baseline;
-      transition: transform $dur $ease;
-    }
 
     &:hover {
       color: var(--c-accent);
     }
-
-    &:hover svg {
-      transform: translate(2px, -2px);
-    }
   }
 }
 
-.meta {
-  position: relative;
-  margin-top: 0.45rem;
+.institution {
+  margin-top: 0.25rem;
   color: var(--c-text-muted);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 0.93rem;
 }
 
 .sep {
@@ -111,11 +84,9 @@
 }
 
 .details {
-  position: relative;
-  margin-top: 0.8rem;
-  padding-top: 0.7rem;
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
   border-top: 1px dashed var(--c-border);
   color: var(--c-text-soft);
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.9rem;
 }

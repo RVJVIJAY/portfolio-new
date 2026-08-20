@@ -1,0 +1,146 @@
+@use 'sass:map';
+@use '../../styles/core' as *;
+
+.picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Matches .iconButton in the navbar so the three controls read as one set. */
+.trigger {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: $radius-md;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
+  transition: border-color $dur-fast $ease, transform $dur-fast $ease;
+
+  @include focus-ring;
+
+  &:hover {
+    border-color: var(--c-accent);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+.dot {
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  transition: background-color $dur $ease;
+}
+
+/* ---------------------------------------------------------------------------
+   Popover
+--------------------------------------------------------------------------- */
+.panel {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  z-index: $z-menu;
+  padding: 0.9rem;
+  border: 1px solid var(--c-border);
+  border-radius: $radius-lg;
+  background: var(--c-surface);
+  box-shadow: var(--shadow-md);
+  animation: accent-in $dur $ease;
+}
+
+.title {
+  margin-bottom: 0.7rem;
+  color: var(--c-text-soft);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 0.5rem;
+}
+
+.swatch {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  transition: transform $dur-fast $ease, box-shadow $dur-fast $ease;
+
+  @include focus-ring;
+
+  &:hover {
+    transform: scale(1.12);
+  }
+
+  /* Selected: a ring in the live accent, held off the swatch by a gap in the
+   * panel's own background. Deliberately not `currentColor` — that is reserved
+   * for the tick, which has to contrast *against* the swatch, not match it. */
+  &[aria-pressed='true'] {
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.12),
+      0 0 0 2px var(--c-surface),
+      0 0 0 4px var(--c-accent);
+  }
+
+  svg {
+    /* Drawn over the swatch's own colour, so it needs its own contrast. */
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Swatch colours, generated from the same map main.scss builds the tokens from.
+   Scoped under .picker so the attribute selector cannot leak to the page.
+--------------------------------------------------------------------------- */
+@each $name, $palette in $accents {
+  .picker [data-accent-swatch='#{$name}'] {
+    background: map.get($palette, 'light');
+  }
+
+  :root[data-theme='dark'] .picker [data-accent-swatch='#{$name}'] {
+    background: map.get($palette, 'dark');
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .picker [data-accent-swatch='#{$name}'] {
+      background: map.get($palette, 'dark');
+    }
+  }
+}
+
+/* Dark swatches are light enough that a white tick would disappear. */
+:root[data-theme='dark'] .swatch svg {
+  color: #0b1120;
+  filter: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .swatch svg {
+    color: #0b1120;
+    filter: none;
+  }
+}
+
+@keyframes accent-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -4,16 +4,13 @@ export type Theme = 'light' | 'dark';
 
 const STORAGE_KEY = 'portfolio-theme';
 
-/* Mirrors the bootstrap script in index.html exactly — the design is dark-first,
- * so only an explicit light preference opts out of it. Any divergence between
- * the two would show up as a theme flash on the first paint. */
 function getInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'dark';
+  if (typeof window === 'undefined') return 'light';
 
   const stored = window.localStorage.getItem(STORAGE_KEY);
   if (stored === 'light' || stored === 'dark') return stored;
 
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 /** Persisted light/dark theme, applied as `data-theme` on <html>. */
