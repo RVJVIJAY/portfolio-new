@@ -58,8 +58,10 @@ src/
 ├── data/
 │   ├── resume.ts            # ← your content
 │   └── types.ts             # content schema
+├── utils/
+│   └── color.ts             # derives readable light/dark pairs from any hex
 ├── hooks/
-│   ├── useAccent.ts         # persisted accent colour
+│   ├── useAccent.ts         # persisted accent colour (preset or custom)
 │   ├── useActiveSection.ts  # scroll-spy for the nav
 │   ├── useLockBodyScroll.ts # locks scrolling behind the mobile drawer
 │   ├── useReveal.ts         # fade-in on scroll (IntersectionObserver)
@@ -118,6 +120,30 @@ To add a palette, add an entry to that map and a matching entry to the `ACCENTS`
 its swatch from the same map, so nothing else needs to move. To change the *default*, edit
 the `'indigo'` entry (the `:root` fallback is generated from it) and the two `'indigo'`
 literals in `useAccent.ts` and the `index.html` bootstrap.
+
+### Any colour
+
+Below the presets sits a native colour input — full spectrum, plus the OS eyedropper where
+the browser offers one. A picked colour has no hand-tuned pair, so
+**`src/utils/color.ts`** derives one: it keeps the chosen hue and saturation and moves only
+lightness, far enough that the result clears 4.5:1 both as text on the canvas *and* as a
+fill carrying button text. Light mode darkens, dark mode lightens, and a colour that
+already passes comes back untouched — about a third of picks are used exactly as chosen.
+
+That is why bright yellow becomes olive on the light theme while staying yellow on the
+dark one: it is the only way a single pick can stay readable on both canvases. The panel
+shows both derived colours side by side so the adjustment is visible rather than looking
+like the pick was ignored.
+
+The custom accent cannot use a generated CSS block, so `useAccent()` writes eight inline
+variables on `<html>` — a light set and a dark set — and the `[data-accent='custom']` rules
+in main.scss choose between them. The indirection is deliberate: writing `--c-accent`
+inline would beat every theme selector and freeze one colour across both modes. The derived
+variables are cached in `localStorage` next to the hex, so the bootstrap script can replay
+them at first paint without duplicating any of the colour maths.
+
+The derivation is pure and covered by a sweep over ~2000 colours; if you change the
+thresholds in `color.ts`, re-run that check rather than trusting a couple of samples.
 
 ## Responsive behaviour
 

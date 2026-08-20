@@ -113,6 +113,37 @@
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Custom accent
+   A colour picked by the visitor has no generated block. useAccent() writes
+   eight inline variables on <html> — a light set and a dark set, derived from
+   the one hex — and these rules pick the pair that matches the active theme.
+
+   Doing it this way rather than writing --c-accent directly matters: an inline
+   style would beat every theme selector, so one custom colour would be stuck
+   across both light and dark. Here the indirection keeps the theme in charge.
+--------------------------------------------------------------------------- */
+@mixin custom-accent-tokens($mode) {
+  --c-accent: var(--accent-#{$mode});
+  --c-accent-strong: var(--accent-#{$mode}-strong);
+  --c-accent-soft: var(--accent-#{$mode}-soft);
+  --c-on-accent: var(--accent-#{$mode}-on);
+}
+
+:root[data-accent='custom'] {
+  @include custom-accent-tokens('light');
+}
+
+:root[data-theme='dark'][data-accent='custom'] {
+  @include custom-accent-tokens('dark');
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light'])[data-accent='custom'] {
+    @include custom-accent-tokens('dark');
+  }
+}
+
 @include respond-to('lg') {
   :root {
     --section-gap: 6.5rem;

@@ -7,7 +7,7 @@
   align-items: center;
 }
 
-/* Matches .iconButton in the navbar so the three controls read as one set. */
+/* Matches .iconButton in the navbar so the controls read as one set. */
 .trigger {
   display: grid;
   place-items: center;
@@ -45,6 +45,7 @@
   top: calc(100% + 0.6rem);
   right: 0;
   z-index: $z-menu;
+  width: max-content;
   padding: 0.9rem;
   border: 1px solid var(--c-border);
   border-radius: $radius-lg;
@@ -54,6 +55,7 @@
 }
 
 .title {
+  display: block;
   margin-bottom: 0.7rem;
   color: var(--c-text-soft);
   font-size: 0.72rem;
@@ -101,8 +103,106 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Swatch colours, generated from the same map main.scss builds the tokens from.
-   Scoped under .picker so the attribute selector cannot leak to the page.
+   Custom colour
+--------------------------------------------------------------------------- */
+.custom {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--c-border);
+}
+
+.customRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Wrapper so the swatch can carry a border and the selected ring — the native
+ * control paints its own box and ignores most styling. */
+.customField {
+  position: relative;
+  display: block;
+  width: 1.85rem;
+  height: 1.85rem;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  transition: box-shadow $dur-fast $ease, transform $dur-fast $ease;
+
+  &:hover {
+    transform: scale(1.12);
+  }
+
+  /* The input itself is focused, so the ring has to be drawn from here. */
+  &:focus-within {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 3px;
+  }
+}
+
+.customActive {
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.12),
+    0 0 0 2px var(--c-surface),
+    0 0 0 4px var(--c-accent);
+}
+
+.colorInput {
+  /* Oversized and offset so the control's own chrome falls outside the circle,
+   * leaving a clean disc of colour. */
+  position: absolute;
+  inset: -25%;
+  width: 150%;
+  height: 150%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+  }
+
+  &::-moz-color-swatch {
+    border: none;
+  }
+}
+
+.hex {
+  color: var(--c-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+.preview {
+  display: flex;
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.previewItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--c-text-soft);
+  font-size: 0.7rem;
+}
+
+.previewDot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------------------------------------------------------------------------
+   Preset swatch colours, generated from the same map main.scss builds the
+   tokens from. Scoped under .picker so the attribute selector cannot leak.
 --------------------------------------------------------------------------- */
 @each $name, $palette in $accents {
   .picker [data-accent-swatch='#{$name}'] {
@@ -118,6 +218,12 @@
       background: map.get($palette, 'dark');
     }
   }
+}
+
+/* The trigger dot under a custom accent simply mirrors the live token, which is
+ * already the right value for the active theme. */
+.picker [data-accent-swatch='custom'] {
+  background: var(--c-accent);
 }
 
 /* Dark swatches are light enough that a white tick would disappear. */

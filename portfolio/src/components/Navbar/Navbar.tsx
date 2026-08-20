@@ -6,6 +6,7 @@ import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
 import type { Theme } from '../../hooks/useTheme';
 import { AccentPicker } from '../AccentPicker/AccentPicker';
 import type { Accent } from '../../hooks/useAccent';
+import type { AccentDerivation } from '../../utils/color';
 import styles from './Navbar.module.scss';
 import { Link } from '../Link/Link';
 
@@ -20,7 +21,10 @@ interface NavbarProps {
   theme: Theme;
   onToggleTheme: () => void;
   accent: Accent;
+  customHex: string;
+  accentDerivation: AccentDerivation;
   onAccentChange: (accent: Accent) => void;
+  onCustomAccentChange: (hex: string) => void;
 }
 
 export function Navbar({
@@ -29,7 +33,10 @@ export function Navbar({
   theme,
   onToggleTheme,
   accent,
+  customHex,
+  accentDerivation,
   onAccentChange,
+  onCustomAccentChange,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const scrolled = useScrolled();
@@ -113,7 +120,13 @@ export function Navbar({
         </ul>
 
         <div className={styles.actions}>
-          <AccentPicker accent={accent} onChange={onAccentChange} />
+          <AccentPicker
+            accent={accent}
+            customHex={customHex}
+            derived={accentDerivation}
+            onChange={onAccentChange}
+            onCustomChange={onCustomAccentChange}
+          />
 
           <button
             type="button"

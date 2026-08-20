@@ -25,14 +25,32 @@
          src/hooks/useAccent.ts — keep the two in step. */
       (function () {
         var allowed = ['indigo', 'violet', 'cyan', 'emerald', 'amber', 'rose'];
+        var root = document.documentElement;
         var accent = 'indigo';
+
         try {
           var stored = localStorage.getItem('portfolio-accent');
-          if (allowed.indexOf(stored) > -1) accent = stored;
+
+          if (allowed.indexOf(stored) > -1) {
+            accent = stored;
+          } else if (stored === 'custom') {
+            /* useAccent() caches the eight derived variables alongside the hex,
+               so this only replays them — no colour maths is duplicated here. */
+            var entry = JSON.parse(localStorage.getItem('portfolio-accent-custom'));
+            if (entry && entry.vars) {
+              for (var name in entry.vars) {
+                if (Object.prototype.hasOwnProperty.call(entry.vars, name)) {
+                  root.style.setProperty(name, entry.vars[name]);
+                }
+              }
+              accent = 'custom';
+            }
+          }
         } catch (error) {
-          /* Private mode or blocked storage — fall through to the default. */
+          /* Blocked storage or a corrupt entry — fall through to the default. */
         }
-        document.documentElement.dataset.accent = accent;
+
+        root.dataset.accent = accent;
       })();
     </script>
   </head>

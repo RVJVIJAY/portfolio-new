@@ -36,7 +36,8 @@ const BackToTop = lazy(() =>
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
-  const { accent, setAccent } = useAccent();
+  const { accent, customHex, derived: accentDerivation, setAccent, setCustomHex } =
+    useAccent();
   const {
     profile,
     socials,
@@ -83,7 +84,10 @@ export default function App() {
         theme={theme}
         onToggleTheme={toggleTheme}
         accent={accent}
+        customHex={customHex}
+        accentDerivation={accentDerivation}
         onAccentChange={setAccent}
+        onCustomAccentChange={setCustomHex}
       />
 
       <main id="main">
