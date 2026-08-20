@@ -86,7 +86,7 @@ export const resume: ResumeData = {
       company: 'Dreams Technologies',
       role: 'Frontend Developer',
       start: 'Jul 2024',
-      end: 'Present',
+      end: 'Aug 2026',
       location: 'Coimbatore, India',
       type: 'Full-time',
       summary:
