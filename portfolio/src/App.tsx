@@ -78,7 +78,12 @@ export default function App() {
       <Navbar brand={profile.name} items={navItems} theme={theme} onToggleTheme={toggleTheme} />
 
       <main id="main">
-        <Hero profile={profile} socials={socials} stats={stats} />
+        <Hero
+          profile={profile}
+          socials={socials}
+          stats={stats}
+          focusAreas={focusAreas}
+        />
 
         {profile.summary.length > 0 ? (
           <Suspense fallback={<SectionSkeleton cards={2} columns={2} tall alt />}>
@@ -128,6 +133,9 @@ export default function App() {
         />
         <BackToTop />
       </Suspense>
+
+      {/* Film grain, painted over everything. */}
+      <div className="grain" aria-hidden="true" />
     </>
   );
 }

@@ -6,14 +6,21 @@
   z-index: $z-header;
   background: transparent;
   border-bottom: 1px solid transparent;
-  transition: background-color $dur $ease, border-color $dur $ease, box-shadow $dur $ease;
+  transition: background-color $dur $ease, border-color $dur $ease,
+    backdrop-filter $dur $ease;
 }
 
 .scrolled {
   background: var(--header-bg);
-  backdrop-filter: saturate(180%) blur(14px);
+  backdrop-filter: saturate(160%) blur(16px);
   border-bottom-color: var(--c-border);
-  box-shadow: var(--shadow-sm);
+}
+
+/* While the full-screen drawer is open the header keeps its own solid ground
+ * so the brand and close button stay readable over the panel. */
+.header[data-menu-open='true'] {
+  background: var(--c-bg);
+  border-bottom-color: var(--c-border);
 }
 
 .nav {
@@ -23,123 +30,148 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  height: 4rem;
-
-  @include respond-to('lg') {
-    height: 4.75rem;
-  }
+  height: var(--header-h);
 }
 
+/* ---------------------------------------------------------------------------
+   Brand
+--------------------------------------------------------------------------- */
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.7rem;
   color: var(--c-text);
-  font-weight: 700;
 
   @include focus-ring;
 }
 
 .brandMark {
+  position: relative;
   display: grid;
   place-items: center;
   width: 2.1rem;
   height: 2.1rem;
-  border-radius: $radius-md;
-  background: linear-gradient(135deg, var(--c-accent), var(--c-accent-strong));
-  color: #fff;
-  font-size: 0.82rem;
-  transition: transform $dur $ease, box-shadow $dur $ease;
+  overflow: hidden;
+  border: 1px solid var(--c-border-strong);
+  border-radius: $radius-sm;
+  transition: border-color $dur $ease;
 
   .brand:hover & {
-    transform: rotate(-6deg) scale(1.06);
-    box-shadow: 0 6px 18px var(--c-accent-soft);
+    border-color: var(--c-accent);
+  }
+}
+
+/* Accent wipes up through the monogram on hover. */
+.brandMarkFill {
+  position: absolute;
+  inset: 0;
+  background: var(--c-accent);
+  transform: translateY(101%);
+  transition: transform $dur $ease;
+
+  .brand:hover & {
+    transform: none;
+  }
+}
+
+.brandMarkText {
+  @include mono-label(0.68rem);
+
+  position: relative;
+  letter-spacing: 0.04em;
+  transition: color $dur $ease;
+
+  .brand:hover & {
+    color: var(--c-on-accent);
   }
 }
 
 .brandName {
   display: none;
-  font-size: 0.98rem;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
 
   @include respond-to('sm') {
     display: block;
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Desktop links
+--------------------------------------------------------------------------- */
 .links {
   display: none;
 
   @include respond-to('md') {
     display: flex;
     align-items: center;
-    gap: 0.15rem;
+    gap: 0.35rem;
   }
 }
 
 .link {
-  position: relative;
-  display: block;
-  padding: 0.5rem 0.75rem;
-  border-radius: $radius-sm;
+  /* Centred rather than baseline-aligned: the label sits in an overflow-hidden
+   * box for the swap, which moves its baseline. */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.6rem;
   color: var(--c-text-muted);
+  font-family: var(--font-display);
   font-size: 0.9rem;
   font-weight: 500;
-  transition: color $dur $ease, background-color $dur $ease;
-
-  /* Underline that grows out from the centre on hover and on the active link. */
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0.75rem;
-    right: 0.75rem;
-    bottom: 0.15rem;
-    height: 2px;
-    border-radius: $radius-pill;
-    background: linear-gradient(90deg, var(--c-accent), var(--c-accent-strong));
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform $dur $ease;
-  }
+  transition: color $dur $ease;
 
   &:hover {
     color: var(--c-text);
-    background: var(--c-accent-soft);
-  }
-
-  &:hover::after {
-    transform: scaleX(0.6);
   }
 
   @include respond-to('lg') {
-    padding-inline: 0.9rem;
-    font-size: 0.94rem;
+    padding-inline: 0.75rem;
   }
 }
 
-.linkLabel {
-  display: inline-block;
-  transition: transform $dur $ease;
+.linkIndex {
+  @include mono-label(0.6rem);
 
-  .link:hover & {
-    transform: translateY(-1px);
+  color: var(--c-text-soft);
+  transition: color $dur $ease, opacity $dur $ease;
+  opacity: 0.55;
+
+  .link:hover &,
+  .link.active & {
+    color: var(--c-accent);
+    opacity: 1;
   }
 }
 
-.active {
-  color: var(--c-accent);
-  font-weight: 600;
+.linkText {
+  @include text-swap;
+
+  > span:first-child {
+    .link:hover & {
+      transform: translateY(-100%);
+    }
+  }
+
+  > span:last-child {
+    color: var(--c-accent);
+
+    .link:hover & {
+      transform: none;
+    }
+  }
 }
 
 .link.active {
-  background: var(--c-accent-soft);
+  color: var(--c-accent);
 }
 
-.link.active::after,
-.link.active:hover::after {
-  transform: scaleX(1);
-}
-
+/* ---------------------------------------------------------------------------
+   Actions
+--------------------------------------------------------------------------- */
 .actions {
   display: flex;
   align-items: center;
@@ -149,13 +181,12 @@
 .iconButton {
   display: grid;
   place-items: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: $radius-md;
+  width: 2.3rem;
+  height: 2.3rem;
   border: 1px solid var(--c-border);
-  background: var(--c-surface);
+  border-radius: $radius-sm;
   color: var(--c-text-muted);
-  transition: color $dur-fast $ease, border-color $dur-fast $ease, transform $dur-fast $ease;
+  transition: color $dur $ease, border-color $dur $ease, background-color $dur $ease;
 
   @include focus-ring;
 
@@ -169,99 +200,200 @@
   }
 }
 
+/* Sun and moon stacked in a 1.05rem window; the strip slides on theme change. */
+.themeIcons {
+  display: block;
+  height: 1.05rem;
+  overflow: hidden;
+
+  svg {
+    transition: transform $dur-slow $ease-spring;
+  }
+
+  :root[data-theme='light'] & svg {
+    transform: translateY(-1.05rem);
+  }
+}
+
+/* Two bars that cross into an X. */
+.burger {
+  position: relative;
+  display: block;
+  width: 1.1rem;
+  height: 0.7rem;
+
+  span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    border-radius: $radius-pill;
+    background: currentColor;
+    transition: transform $dur $ease, width $dur $ease;
+  }
+
+  span:first-child {
+    top: 0;
+  }
+
+  span:last-child {
+    bottom: 0;
+    width: 70%;
+  }
+
+  .menuButton:hover & span:last-child {
+    width: 100%;
+  }
+}
+
+.header[data-menu-open='true'] .burger {
+  span:first-child {
+    transform: translateY(0.35rem) rotate(45deg);
+  }
+
+  span:last-child {
+    width: 100%;
+    transform: translateY(-0.34rem) rotate(-45deg);
+  }
+}
+
 .menuButton {
   @include respond-to('md') {
     display: none;
   }
 }
 
-.drawer {
+/* ---------------------------------------------------------------------------
+   Reading progress
+--------------------------------------------------------------------------- */
+.progress {
   position: absolute;
   inset-inline: 0;
-  top: 100%;
+  bottom: -1px;
+  height: 1.5px;
+  background: var(--c-accent);
+  transform-origin: left center;
+  transform: scaleX(0);
+  will-change: transform;
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile drawer — a full-height panel of oversized display links
+--------------------------------------------------------------------------- */
+.drawer {
+  position: fixed;
+  inset: var(--header-h) 0 0;
   z-index: $z-menu;
-  padding: 0.5rem 1.25rem 1.1rem;
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
-  box-shadow: var(--shadow-md);
-  animation: drawer-in $dur $ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem $container-pad-mobile 2.5rem;
+  background: var(--c-bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-1.5rem);
+  transition: opacity $dur $ease, transform $dur $ease, visibility 0s linear $dur;
 
   @include respond-to('md') {
     display: none;
   }
+}
+
+.header[data-menu-open='true'] .drawer {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity $dur $ease, transform $dur-slow $ease, visibility 0s;
+}
+
+.drawerList {
+  display: grid;
+  gap: 0;
+}
+
+.drawerList li {
+  @include rule(bottom);
+
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition: opacity $dur-slow $ease, transform $dur-slow $ease;
+
+  &:first-child {
+    @include rule(top);
+  }
+}
+
+.header[data-menu-open='true'] .drawerList li {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(80ms + var(--i, 0) * #{$stagger});
 }
 
 .drawerLink {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.85rem 0.6rem;
-  border-bottom: 1px solid var(--c-border);
-  border-radius: $radius-sm;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding: 1.15rem 0.25rem;
   color: var(--c-text);
-  font-size: 1.02rem;
-  font-weight: 500;
+  transition: color $dur $ease, padding-left $dur $ease;
 
   svg {
+    margin-left: auto;
+    align-self: center;
+    color: var(--c-text-soft);
     opacity: 0;
-    transform: translateX(-6px);
-    transition: opacity $dur $ease, transform $dur $ease;
+    transform: translate(-6px, 6px);
+    transition: opacity $dur $ease, transform $dur $ease, color $dur $ease;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: var(--c-accent);
-    padding-left: 0.9rem;
+    padding-left: 0.75rem;
   }
 
-  &:hover svg {
+  &:hover svg,
+  &:focus-visible svg {
     opacity: 1;
     transform: none;
+    color: var(--c-accent);
   }
+}
+
+.drawerIndex {
+  @include mono-label(0.62rem);
+
+  color: var(--c-text-soft);
+  flex-shrink: 0;
+}
+
+.drawerLabel {
+  @include display(clamp(1.6rem, 9vw, 2.4rem));
 }
 
 .drawerLink.active {
   color: var(--c-accent);
-  background: var(--c-accent-soft);
+
+  .drawerIndex {
+    color: var(--c-accent);
+  }
 
   svg {
     opacity: 1;
     transform: none;
+    color: var(--c-accent);
   }
 }
 
-.drawer li:last-child .drawerLink {
-  border-bottom: none;
-}
+.drawerFoot {
+  @include mono-label(0.66rem);
 
-.backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: rgba(4, 8, 18, 0.45);
+  color: var(--c-text-soft);
   opacity: 0;
-  pointer-events: none;
-  transition: opacity $dur $ease;
-
-  @include respond-to('md') {
-    display: none;
-  }
+  transition: opacity $dur-slow $ease;
 }
 
-.backdropOpen {
-  z-index: $z-menu - 1;
+.header[data-menu-open='true'] .drawerFoot {
   opacity: 1;
-  pointer-events: auto;
-}
-
-@keyframes drawer-in {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  transition-delay: calc(80ms + var(--i, 0) * #{$stagger});
 }

@@ -48,6 +48,44 @@ navigation automatically.
   Tune the fallback shape per section with `cards`, `columns`, `tall` and `alt`.
 - **Reveal on scroll** — `useReveal()` uses `IntersectionObserver`, so off-screen sections
   do no animation work.
+- **No animation library** — every effect is CSS transitions and keyframes driven by a
+  handful of small hooks. Nothing ships to the browser to make the site move.
+
+## Motion
+
+The design is dark-first and editorial: hairlines instead of shadows, oversized display
+type, mono labels, one vivid accent. Motion is part of that language rather than dressing
+on top of it, and it is built from four pieces.
+
+**`<Reveal>`** (`src/components/Reveal/Reveal.tsx`) wraps one element in a scroll-triggered
+entrance. Pass `variant` for the direction (`up`, `left`, `mask`, `line`…) and `index` to
+stagger it behind its siblings:
+
+```tsx
+{items.map((item, index) => (
+  <Reveal as="li" key={item.id} index={index} className={styles.card}>…</Reveal>
+))}
+```
+
+**The `.reveal*` utilities** in `main.scss` hold the visual states. `.reveal` is the resting
+(hidden) state, `.reveal--visible` the settled one, and `--i` multiplies the stagger step —
+so adding a variant means adding one class, not touching any JavaScript.
+
+**Scroll-linked hooks** drive the effects a transition cannot express on its own:
+
+| Hook | Drives |
+| --- | --- |
+| `useScrollProgress()` | Header progress hairline, back-to-top ring |
+| `useElementProgress()` | The accent segment that fills the experience timeline as you read |
+| `useCountUp()` | Hero stats ticking up from zero |
+| `useRotatingText()` | The typewriter line under the hero tagline |
+| `usePointerGlow()` | Cards lighting up under the cursor (one listener per grid) |
+| `usePointerParallax()` | Hero grid, aura and portrait drifting with the pointer |
+
+**Reduced motion** is handled in both directions. `main.scss` collapses every transition and
+animation under `prefers-reduced-motion: reduce` and forces all revealed elements visible;
+`useReducedMotion()` lets the JavaScript-driven effects (count-ups, typewriter, pointer
+tracking) opt out too, instead of animating where nobody can see them.
 
 ## Structure
 
@@ -59,17 +97,25 @@ src/
 │   ├── resume.ts            # ← your content
 │   └── types.ts             # content schema
 ├── hooks/
-│   ├── useActiveSection.ts  # scroll-spy for the nav
-│   ├── useLockBodyScroll.ts # locks scrolling behind the mobile drawer
-│   ├── useReveal.ts         # fade-in on scroll (IntersectionObserver)
-│   ├── useScrolled.ts       # sticky-header + back-to-top trigger
-│   └── useTheme.ts          # persisted light/dark theme
+│   ├── useActiveSection.ts    # scroll-spy for the nav
+│   ├── useCountUp.ts          # hero stats ticking up from zero
+│   ├── useElementProgress.ts  # scroll position through one element (timeline fill)
+│   ├── useLockBodyScroll.ts   # locks scrolling behind the mobile drawer
+│   ├── usePointerGlow.ts      # pointer-tracked glow on [data-glow] cards
+│   ├── usePointerParallax.ts  # publishes pointer position as --mx / --my
+│   ├── useReducedMotion.ts    # lets JS-driven effects honour the OS setting
+│   ├── useReveal.ts           # fade-in on scroll (IntersectionObserver)
+│   ├── useRotatingText.ts     # typewriter for the hero focus line
+│   ├── useScrolled.ts         # sticky-header + back-to-top trigger
+│   ├── useScrollProgress.ts   # document scroll 0 → 1
+│   └── useTheme.ts            # persisted light/dark theme
 ├── styles/
-│   ├── _variables.scss      # breakpoints, radii, motion, z-index
-│   ├── _mixins.scss         # respond-to, container, focus-ring, card…
-│   ├── _core.scss           # @forward barrel used by every module
-│   └── main.scss            # theme tokens, reset, global helpers
+│   ├── _variables.scss        # breakpoints, radii, motion, z-index
+│   ├── _mixins.scss           # respond-to, container, focus-ring, display, card…
+│   ├── _core.scss             # @forward barrel used by every module
+│   └── main.scss              # theme tokens, reset, reveal utilities, keyframes
 └── components/
+    ├── Reveal/Reveal.tsx      # scroll-triggered entrance wrapper
     └── <Name>/<Name>.tsx + <Name>.module.scss
 ```
 
@@ -77,20 +123,31 @@ Each component owns a co-located **SCSS module**; shared decisions live in `src/
 
 ## Theming
 
-Colours are CSS custom properties defined in `src/styles/main.scss`. The site follows the
-OS preference on first visit, and the header toggle stores an explicit choice in
-`localStorage`. To restyle the whole site, change the token values under `:root` (light)
-and the `dark-tokens` mixin (dark) — nothing else needs to move.
+Colours are CSS custom properties defined in `src/styles/main.scss`. **Dark is the base** —
+the design is drawn for a near-black canvas — and light is a fully-tuned warm-paper
+alternate. The site follows the OS preference on first visit (only an explicit *light*
+preference opts out of dark), and the header toggle stores a choice in `localStorage`. An
+inline script in `index.html` applies the stored theme before the first paint, so the page
+never flashes; if you change that rule, change `getInitialTheme()` in `useTheme.ts` to
+match.
+
+To restyle the whole site, change the token values under `:root` (dark) and in the
+`light-tokens` mixin (light) — nothing else needs to move.
 
 Change the accent in one place:
 
 ```scss
 :root {
-  --c-accent: #4f46e5;
-  --c-accent-strong: #4338ca;
-  --c-accent-soft: rgba(79, 70, 229, 0.1);
+  --c-accent: #ff5d2e;
+  --c-accent-strong: #ff8560;
+  --c-accent-soft: rgba(255, 93, 46, 0.14);
+  --c-on-accent: #0a0a0c;   /* text drawn on top of the accent */
 }
 ```
+
+Type is three families, all loaded in `index.html`: **Space Grotesk** for display and UI,
+**Inter** for body copy, **JetBrains Mono** for labels, dates and indices, plus
+**Instrument Serif** italic for the name in the hero.
 
 ## Responsive behaviour
 

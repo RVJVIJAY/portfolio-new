@@ -3,27 +3,38 @@
 .timeline {
   position: relative;
   display: grid;
-  gap: 1.25rem;
-  padding-left: 1.5rem;
+  gap: 1.5rem;
+  padding-left: 1.75rem;
 
-  /* The vertical rail. */
-  &::before {
+  /* The rail: a static hairline… */
+  &::before,
+  &::after {
     content: '';
     position: absolute;
-    top: 0.75rem;
-    bottom: 0.75rem;
-    left: 0.31rem;
-    width: 2px;
-    border-radius: $radius-pill;
-    background: linear-gradient(var(--c-accent), var(--c-border));
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 0.3rem;
+    width: 1px;
+  }
+
+  &::before {
+    background: var(--c-border);
+  }
+
+  /* …and the accent segment on top of it, scaled by scroll position. */
+  &::after {
+    background: linear-gradient(var(--c-accent), var(--c-accent-strong));
+    transform: scaleY(var(--fill, 0));
+    transform-origin: top center;
   }
 
   @include respond-to('md') {
-    gap: 1.75rem;
-    padding-left: 2.25rem;
+    gap: 2rem;
+    padding-left: 2.5rem;
 
-    &::before {
-      left: 0.56rem;
+    &::before,
+    &::after {
+      left: 0.55rem;
     }
   }
 }
@@ -32,152 +43,203 @@
   position: relative;
 }
 
+/* A diamond that snaps upright and fills with accent as the card arrives. */
 .marker {
   position: absolute;
-  top: 1.6rem;
-  left: -1.5rem;
-  width: 0.85rem;
-  height: 0.85rem;
-  border-radius: 50%;
-  background: var(--c-accent);
-  box-shadow: 0 0 0 4px var(--c-bg-alt);
+  top: 1.75rem;
+  left: -1.75rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  background: var(--c-bg-alt);
+  border: 1px solid var(--c-border-strong);
+  transform: translateX(0.02rem) rotate(45deg) scale(0.4);
+  opacity: 0;
+  transition:
+    transform $dur-slow $ease-spring calc(var(--i, 0) * #{$stagger} + 120ms),
+    opacity $dur-slow $ease calc(var(--i, 0) * #{$stagger} + 120ms),
+    background-color $dur $ease,
+    border-color $dur $ease;
 
   @include respond-to('md') {
-    left: -2.25rem;
-    top: 1.85rem;
-    width: 1.05rem;
-    height: 1.05rem;
+    top: 2rem;
+    left: -2.5rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    transform: translateX(0.06rem) rotate(45deg) scale(0.4);
   }
 }
 
-.card {
-  @include card;
+.item:global(.reveal--visible) .marker {
+  opacity: 1;
+  transform: translateX(0.02rem) rotate(45deg) scale(1);
 
-  padding: 1.35rem;
-  transition: transform $dur $ease, border-color $dur $ease, box-shadow $dur $ease;
+  @include respond-to('md') {
+    transform: translateX(0.06rem) rotate(45deg) scale(1);
+  }
+}
+
+.item:hover .marker {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.card {
+  @include card-interactive;
+
+  padding: 1.4rem 1.3rem 1.5rem;
+  overflow: hidden;
 
   &:hover {
-    transform: translateX(3px);
-    border-color: var(--c-accent);
-    box-shadow: var(--shadow-md);
+    transform: translateX(4px);
   }
 
   @include respond-to('md') {
-    padding: 1.75rem;
+    padding: 1.85rem 1.75rem 1.9rem;
   }
 }
 
 .head {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.85rem;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid var(--c-border);
 
   @include respond-to('md') {
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 }
 
-.role {
-  font-size: 1.1rem;
-  color: var(--c-text);
-
-  @include respond-to('md') {
-    font-size: 1.2rem;
-  }
+.identity {
+  min-width: 0;
 }
 
 .company {
-  margin-top: 0.2rem;
+  @include mono-label(0.62rem);
+
   color: var(--c-accent);
-  font-weight: 600;
-  font-size: 0.95rem;
 }
 
-.sep {
-  margin-inline: 0.4rem;
+.role {
+  margin-top: 0.6rem;
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--c-text);
+
+  @include respond-to('md') {
+    font-size: 1.55rem;
+  }
+}
+
+.location {
+  margin-top: 0.35rem;
   color: var(--c-text-soft);
-  font-weight: 400;
+  font-size: 0.88rem;
 }
 
 .period {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 
   @include respond-to('md') {
     flex-direction: column;
     align-items: flex-end;
-    gap: 0.35rem;
+    gap: 0.5rem;
     flex-shrink: 0;
   }
 }
 
 .dates {
+  @include mono-label(0.62rem);
+
   color: var(--c-text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
   white-space: nowrap;
 }
 
 .type {
-  padding: 0.15rem 0.6rem;
+  @include mono-label(0.56rem);
+
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--c-border);
   border-radius: $radius-pill;
-  background: var(--c-accent-soft);
-  color: var(--c-accent);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  color: var(--c-text-soft);
 }
 
 .summary {
-  margin-top: 0.9rem;
-  color: var(--c-text-muted);
-  font-size: 0.97rem;
+  position: relative;
+  margin-top: 1.25rem;
+  color: var(--c-text);
+  font-size: 1rem;
+  line-height: 1.65;
 }
 
 .highlights {
+  position: relative;
   display: grid;
-  gap: 0.55rem;
-  margin-top: 1rem;
+  gap: 0.7rem;
+  margin-top: 1.25rem;
 
   li {
     position: relative;
-    padding-left: 1.2rem;
+    padding-left: 1.35rem;
     color: var(--c-text-muted);
-    font-size: 0.95rem;
+    font-size: 0.94rem;
+    line-height: 1.65;
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity $dur-slow $ease var(--enter-delay, 0ms),
+      transform $dur-slow $ease var(--enter-delay, 0ms);
 
+    /* A short accent rule instead of a bullet. */
     &::before {
       content: '';
       position: absolute;
-      top: 0.65rem;
+      top: 0.72em;
       left: 0;
-      width: 0.4rem;
-      height: 0.4rem;
-      border-radius: 50%;
+      width: 0.7rem;
+      height: 1px;
       background: var(--c-accent);
     }
   }
 }
 
+/* `Reveal` renders the <li>, so .reveal--visible lands on .item, not .card. */
+.item:global(.reveal--visible) .highlights li {
+  --enter-delay: calc(260ms + var(--i, 0) * 60ms);
+
+  opacity: 1;
+  transform: none;
+}
+
 .stack {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin-top: 1.15rem;
-  padding-top: 1.1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
   border-top: 1px dashed var(--c-border);
 
   li {
-    padding: 0.22rem 0.6rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--c-border);
     border-radius: $radius-sm;
-    background: var(--c-surface-2);
     color: var(--c-text-soft);
     font-family: var(--font-mono);
-    font-size: 0.74rem;
+    font-size: 0.7rem;
+    transition: color $dur $ease, border-color $dur $ease;
+
+    &:hover {
+      color: var(--c-accent);
+      border-color: var(--c-accent);
+    }
   }
 }

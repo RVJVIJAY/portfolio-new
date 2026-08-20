@@ -1,8 +1,9 @@
 @use '../../styles/core' as *;
 
 .section {
+  position: relative;
   padding-block: var(--section-gap);
-  scroll-margin-top: 4.5rem;
+  scroll-margin-top: calc(var(--header-h) - 1px);
 }
 
 .alt {
@@ -14,41 +15,113 @@
   @include container;
 }
 
+/* ---------------------------------------------------------------------------
+   Heading block
+--------------------------------------------------------------------------- */
 .head {
-  max-width: 46rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
 
   @include respond-to('md') {
-    margin-bottom: 3.25rem;
+    margin-bottom: 4rem;
   }
 }
 
+.tag {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.1rem;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity $dur-slow $ease, transform $dur-slow $ease;
+}
+
+.index {
+  @include mono-label(0.7rem);
+
+  color: var(--c-accent);
+}
+
 .eyebrow {
+  @include mono-label(0.7rem);
+
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.85rem;
-  padding: 0.35rem 0.85rem;
-  border-radius: $radius-pill;
-  background: var(--c-accent-soft);
-  color: var(--c-accent);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: var(--c-text-soft);
+
+  svg {
+    color: var(--c-text-soft);
+  }
+}
+
+/* The hairline draws itself across the page as the section arrives. */
+.rule {
+  display: block;
+  height: 1px;
+  background: var(--c-border);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform $dur-slower $ease 120ms;
 }
 
 .title {
-  font-size: clamp(1.75rem, 5vw, 2.6rem);
+  margin-top: 1.75rem;
+  font-size: clamp(2rem, 6.5vw, 4rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
   color: var(--c-text);
 }
 
+.titleLine {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+
+  > span {
+    display: block;
+    transform: translateY(105%);
+    transition: transform $dur-slower $ease 220ms;
+  }
+}
+
 .lead {
-  margin-top: 0.9rem;
+  max-width: 42rem;
+  margin-top: 1.25rem;
   color: var(--c-text-muted);
-  font-size: 1.03rem;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity $dur-slow $ease 380ms,
+    transform $dur-slow $ease 380ms;
 
   @include respond-to('md') {
     font-size: 1.08rem;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Settled state
+--------------------------------------------------------------------------- */
+.visible {
+  .tag,
+  .lead {
+    opacity: 1;
+    transform: none;
+  }
+
+  .rule {
+    transform: scaleX(1);
+  }
+
+  .titleLine > span {
+    transform: none;
+  }
+}
+
+.body {
+  position: relative;
 }

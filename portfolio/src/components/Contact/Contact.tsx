@@ -4,7 +4,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import emailjs from '@emailjs/browser';
 import { Section } from '../Section/Section';
+import { Reveal } from '../Reveal/Reveal';
 import { Icon, type IconName } from '../Icon/Icon';
+import { usePointerGlow } from '../../hooks/usePointerGlow';
 import type { Profile, SocialLink } from '../../data/types';
 import styles from './Contact.module.scss';
 import { Link } from '../Link/Link';
@@ -55,6 +57,7 @@ type Status =
 
 export function Contact({ profile, socials }: ContactProps) {
   const [status, setStatus] = useState<Status>({ state: 'idle' });
+  const detailsRef = usePointerGlow<HTMLDivElement>();
 
   const {
     register,
@@ -127,162 +130,188 @@ export function Contact({ profile, socials }: ContactProps) {
     }
   };
 
+  const detailCards: Array<{ label: string; value: string; icon: IconName; href?: string }> = [
+    { label: 'Email', value: profile.email, icon: 'email', href: `mailto:${profile.email}` },
+  ];
+
+  if (profile.phone) {
+    detailCards.push({
+      label: 'Phone',
+      value: profile.phone,
+      icon: 'phone',
+      href: `tel:${profile.phone.replace(/[^+\d]/g, '')}`,
+    });
+  }
+
+  detailCards.push({ label: 'Location', value: profile.location, icon: 'location' });
+
   return (
     <Section
       id="contact"
+      index="06"
       eyebrow="Contact"
       icon="email"
-      title="Get In Touch"
+      title="Get in touch"
       lead="I'm currently open to React Frontend Developer opportunities, freelance projects, and collaborations. Feel free to reach out."
     >
       <div className={styles.grid}>
-        <div className={styles.details}>
-          <Link className={styles.detailCard} to={`mailto:${profile.email}`}>
-            <span className={styles.detailIcon}>
-              <Icon name="email" size="1.15rem" />
-            </span>
-            <span>
-              <span className={styles.detailLabel}>Email</span>
-              <span className={styles.detailValue}>{profile.email}</span>
-            </span>
-          </Link>
+        <div className={styles.details} ref={detailsRef}>
+          {detailCards.map((detail, index) => {
+            const inner = (
+              <>
+                <span className={styles.detailIcon} aria-hidden="true">
+                  <Icon name={detail.icon} size="1.05rem" />
+                </span>
+                <span className={styles.detailText}>
+                  <span className={styles.detailLabel}>{detail.label}</span>
+                  <span className={styles.detailValue}>{detail.value}</span>
+                </span>
+                {detail.href ? (
+                  <Icon name="arrowUpRight" size="0.95rem" aria-hidden="true" />
+                ) : null}
+              </>
+            );
 
-          {profile.phone ? (
-            <Link
-              className={styles.detailCard}
-              to={`tel:${profile.phone.replace(/[^+\d]/g, '')}`}
-            >
-              <span className={styles.detailIcon}>
-                <Icon name="phone" size="1.15rem" />
-              </span>
-              <span>
-                <span className={styles.detailLabel}>Phone</span>
-                <span className={styles.detailValue}>{profile.phone}</span>
-              </span>
-            </Link>
-          ) : null}
-
-          <div className={styles.detailCard}>
-            <span className={styles.detailIcon}>
-              <Icon name="location" size="1.15rem" />
-            </span>
-            <span>
-              <span className={styles.detailLabel}>Location</span>
-              <span className={styles.detailValue}>{profile.location}</span>
-            </span>
-          </div>
+            return (
+              <Reveal
+                as="div"
+                key={detail.label}
+                index={index}
+                className={styles.detailSlot}
+              >
+                {detail.href ? (
+                  <Link className={styles.detailCard} to={detail.href} data-glow>
+                    {inner}
+                  </Link>
+                ) : (
+                  <div className={styles.detailCard} data-glow>
+                    {inner}
+                  </div>
+                )}
+              </Reveal>
+            );
+          })}
 
           {socials.length > 0 ? (
-            <ul className={styles.socials}>
-              {socials.map((social) => (
-                <li key={social.label}>
-                  <Link to={social.url}>
-                    <Icon name={social.icon as IconName} size="1.05rem" />
-                    {social.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <Reveal as="div" index={detailCards.length} className={styles.socialBlock}>
+              <p className={styles.socialTitle}>Elsewhere</p>
+              <ul className={styles.socials}>
+                {socials.map((social) => (
+                  <li key={social.label}>
+                    <Link to={social.url}>
+                      <Icon name={social.icon as IconName} size="1rem" />
+                      <span>{social.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
           ) : null}
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className={styles.row}>
-            <div className={styles.field}>
-              <label htmlFor="contact-name">Name</label>
+        <Reveal as="div" variant="right" className={styles.formWrap}>
+          <form className={styles.form} onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className={styles.row}>
+              <div className={`${styles.field} ${errors.name ? styles.invalid : ''}`}>
+                <label htmlFor="contact-name">Name</label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Your name"
+                  aria-invalid={Boolean(errors.name)}
+                  aria-describedby={errors.name ? 'contact-name-error' : undefined}
+                  {...register('name')}
+                />
+                <span className={styles.fieldRule} aria-hidden="true" />
+                {errors.name ? (
+                  <p className={styles.error} id="contact-name-error" role="alert">
+                    {errors.name.message}
+                  </p>
+                ) : null}
+              </div>
+
+              <div className={`${styles.field} ${errors.email ? styles.invalid : ''}`}>
+                <label htmlFor="contact-email">Email</label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? 'contact-email-error' : undefined}
+                  {...register('email')}
+                />
+                <span className={styles.fieldRule} aria-hidden="true" />
+                {errors.email ? (
+                  <p className={styles.error} id="contact-email-error" role="alert">
+                    {errors.email.message}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+
+            <div className={`${styles.field} ${errors.subject ? styles.invalid : ''}`}>
+              <label htmlFor="contact-subject">Subject</label>
               <input
-                id="contact-name"
+                id="contact-subject"
                 type="text"
-                autoComplete="name"
-                placeholder="Your name"
-                aria-invalid={Boolean(errors.name)}
-                aria-describedby={errors.name ? 'contact-name-error' : undefined}
-                {...register('name')}
+                placeholder="Frontend role / project enquiry"
+                aria-invalid={Boolean(errors.subject)}
+                aria-describedby={errors.subject ? 'contact-subject-error' : undefined}
+                {...register('subject')}
               />
-              {errors.name ? (
-                <p className={styles.error} id="contact-name-error" role="alert">
-                  {errors.name.message}
+              <span className={styles.fieldRule} aria-hidden="true" />
+              {errors.subject ? (
+                <p className={styles.error} id="contact-subject-error" role="alert">
+                  {errors.subject.message}
                 </p>
               ) : null}
             </div>
 
-            <div className={styles.field}>
-              <label htmlFor="contact-email">Email</label>
-              <input
-                id="contact-email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                aria-invalid={Boolean(errors.email)}
-                aria-describedby={errors.email ? 'contact-email-error' : undefined}
-                {...register('email')}
+            <div className={`${styles.field} ${errors.message ? styles.invalid : ''}`}>
+              <label htmlFor="contact-message">Message</label>
+              <textarea
+                id="contact-message"
+                rows={6}
+                placeholder="Tell me about the role, project or collaboration…"
+                aria-invalid={Boolean(errors.message)}
+                aria-describedby={errors.message ? 'contact-message-error' : undefined}
+                {...register('message')}
               />
-              {errors.email ? (
-                <p className={styles.error} id="contact-email-error" role="alert">
-                  {errors.email.message}
+              <span className={styles.fieldRule} aria-hidden="true" />
+              {errors.message ? (
+                <p className={styles.error} id="contact-message-error" role="alert">
+                  {errors.message.message}
                 </p>
               ) : null}
             </div>
-          </div>
 
-          <div className={styles.field}>
-            <label htmlFor="contact-subject">Subject</label>
-            <input
-              id="contact-subject"
-              type="text"
-              placeholder="Frontend role / project enquiry"
-              aria-invalid={Boolean(errors.subject)}
-              aria-describedby={errors.subject ? 'contact-subject-error' : undefined}
-              {...register('subject')}
-            />
-            {errors.subject ? (
-              <p className={styles.error} id="contact-subject-error" role="alert">
-                {errors.subject.message}
-              </p>
-            ) : null}
-          </div>
+            <button type="submit" className={styles.submit} disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <span className={styles.spinner} aria-hidden="true" />
+                  Sending…
+                </>
+              ) : (
+                <>
+                  Send message
+                  <Icon name="arrowUpRight" size="1rem" />
+                </>
+              )}
+            </button>
 
-          <div className={styles.field}>
-            <label htmlFor="contact-message">Message</label>
-            <textarea
-              id="contact-message"
-              rows={6}
-              placeholder="Tell me about the role, project or collaboration…"
-              aria-invalid={Boolean(errors.message)}
-              aria-describedby={errors.message ? 'contact-message-error' : undefined}
-              {...register('message')}
-            />
-            {errors.message ? (
-              <p className={styles.error} id="contact-message-error" role="alert">
-                {errors.message.message}
-              </p>
-            ) : null}
-          </div>
-
-          <button type="submit" className={styles.submit} disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <span className={styles.spinner} aria-hidden="true" />
-                Sending…
-              </>
-            ) : (
-              <>
-                Send message
-                <Icon name="arrowUpRight" size="1.05rem" />
-              </>
-            )}
-          </button>
-
-          <p
-            className={`${styles.status} ${
-              status.state === 'error' ? styles.statusError : ''
-            }`}
-            role="status"
-            aria-live="polite"
-          >
-            {status.state === 'idle' ? '' : status.message}
-          </p>
-        </form>
+            <p
+              className={`${styles.status} ${
+                status.state === 'error' ? styles.statusError : ''
+              } ${status.state === 'idle' ? '' : styles.statusShown}`}
+              role="status"
+              aria-live="polite"
+            >
+              {status.state === 'idle' ? '' : status.message}
+            </p>
+          </form>
+        </Reveal>
       </div>
     </Section>
   );
