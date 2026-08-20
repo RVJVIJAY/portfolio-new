@@ -145,9 +145,21 @@ Change the accent in one place:
 }
 ```
 
-Type is three families, all loaded in `index.html`: **Space Grotesk** for display and UI,
-**Inter** for body copy, **JetBrains Mono** for labels, dates and indices, plus
-**Instrument Serif** italic for the name in the hero.
+### Type
+
+Three families, four weights, all loaded in `index.html`:
+
+| Role | Family | Weight | Applied by |
+| --- | --- | --- | --- |
+| Name | Urbanist | 800 | `@include name-mark` — hero signature, nav brand, footer wordmark |
+| Headings | Urbanist | 600 | global `h1`–`h4`, `@include display()` |
+| Body | Inter | 400 | `body` |
+| Buttons & nav | Inter | 500 | `@include btn-base`, nav and card links |
+| Code / tech badges | JetBrains Mono | 400 / 500 | `@include mono-label`, skill and stack chips |
+
+`name-mark` is deliberately separate from `display()`: 800 is reserved for Vijay's name
+itself and never used for an ordinary heading, so the two never compete. The stylesheet
+requests only those four weights — nothing on the page falls back to a synthesised bold.
 
 ## Responsive behaviour
 

@@ -174,7 +174,7 @@
   /* Each word sits on its own line and cannot wrap, so the ceiling is set by
    * how wide the narrowest column ever gets — the two-column layout at `lg`. */
   font-size: clamp(2.75rem, 11vw, 5.5rem);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 0.88;
   letter-spacing: -0.05em;
   text-transform: uppercase;
@@ -217,10 +217,10 @@
   font-size: 1.05rem;
 
   em {
-    @include serif-accent;
+    @include name-mark;
 
     color: var(--c-text);
-    font-size: 1.3em;
+    font-size: 1.15em;
     line-height: 1;
   }
 }

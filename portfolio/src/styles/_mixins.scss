@@ -91,8 +91,8 @@
   line-height: 1;
 }
 
-/// Tight display type for headings.
-@mixin display($size: 2rem, $weight: 500) {
+/// Tight display type for headings — Urbanist 600.
+@mixin display($size: 2rem, $weight: 600) {
   font-family: var(--font-display);
   font-size: $size;
   font-weight: $weight;
@@ -100,12 +100,13 @@
   letter-spacing: -0.035em;
 }
 
-/// Serif italic accent, used for names and single emphasised words.
-@mixin serif-accent {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+/// The name mark — Urbanist 800. Reserved for Vijay's name itself (hero
+/// signature, nav brand, footer wordmark), never for ordinary headings.
+@mixin name-mark {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 /// A single hairline rule. Editorial layouts separate with lines, not shadows.
@@ -164,10 +165,10 @@
   gap: 0.6rem;
   padding: 0.9rem 1.5rem;
   border-radius: $radius-pill;
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
   white-space: nowrap;
   transition: transform $dur-fast $ease, background-color $dur $ease,
     border-color $dur $ease, color $dur $ease;

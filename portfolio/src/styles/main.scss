@@ -39,9 +39,12 @@
   /* Faint blueprint grid drawn behind the hero. */
   --grid-line: rgba(255, 255, 255, 0.035);
 
+  /* Three families, three jobs:
+   *   display — Urbanist: 800 for the name, 600 for every heading
+   *   sans    — Inter: 400 body copy, 500 buttons and interactive labels
+   *   mono    — JetBrains Mono: tech badges, indices, dates, eyebrows */
+  --font-display: 'Urbanist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-serif: 'Instrument Serif', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --section-gap: 5rem;
@@ -125,6 +128,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-sans);
   font-size: 1rem;
+  font-weight: 400;
   line-height: 1.6;
   color: var(--c-text);
   background-color: var(--c-bg);
@@ -175,7 +179,7 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.03em;
   text-wrap: balance;
@@ -222,7 +226,7 @@ p {
   border-radius: $radius-pill;
   background: var(--c-accent);
   color: var(--c-on-accent);
-  font-weight: 600;
+  font-weight: 500;
 
   &:focus {
     top: 1rem;
